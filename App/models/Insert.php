@@ -19,15 +19,16 @@ class Insert
         $user_id = $stmt->fetchColumn();
         $_SESSION["id"] = $user_id;
 
-        if ($user_id!="0") {
+        if ($user_id != "0") {
             echo json_encode([
                 'success' => true
             ]);
         } else {
-           echo json_encode([
+            echo json_encode([
                 'errorMessage' => "Email already exists",
                 'success' => false
-            ]);}
+            ]);
+        }
 
     }
 
@@ -60,34 +61,37 @@ class Insert
         $sdb = new Db();
         $mess = $sdb->row("SELECT `text`  FROM `chat`.`chat_text` ");
         $user = $sdb->row("SELECT `id`,`username`  FROM $this->table ");
+        $yourname = $sdb->row("SELECT `id`,`username`  FROM $this->table where id =  $user_id");
         $arr = array();
-        $arr = [$mess, $user];
+        $arr = [$mess, $user, $yourname];
         return $arr;
 
 
     }
 
-    public function message1($persmessage,$us_id, $us)
+    public function message1($persmessage, $us_id, $us)
     {
 
-//        $user_id = $_SESSION["id"];
+        $person_id = $_SESSION["id"];
 
         $db = new Db();
-        $db->query("INSERT INTO `chat`.`pers_chat_text`( `pers_text`, `users_id`)
-                                       VALUES ('$us : $persmessage',  '$us_id')");
+        $db->query("INSERT INTO `chat`.`pers_chat_text`( `pers_text`, `users_id`,`person_id`)
+                                       VALUES ('$us : $persmessage',  '$us_id' , '$person_id')");
         $stmt = $db->query("SELECT LAST_INSERT_ID()");
         $last_id = $stmt->fetchColumn();
-        $mess1 = $db->row("SELECT `pers_text`  FROM `chat`.`pers_chat_text` WHERE users_id = $us_id AND id = $last_id");
+        $mess1 = $db->row("SELECT `pers_text`  FROM `chat`.`pers_chat_text` WHERE users_id = $us_id and person_id = '$person_id' AND id = $last_id");
         return $mess1;
 
     }
+
     public function selMessage1($us_id)
     {
+        $person_id = $_SESSION["id"];
 
         $db = new Db();
-        $m = $db->row("SELECT `pers_text`  FROM `chat`.`pers_chat_text` WHERE users_id = $us_id");
+        $m = $db->row("SELECT `pers_text`  FROM `chat`.`pers_chat_text` WHERE users_id = $us_id and person_id = '$person_id' or users_id = $person_id and person_id = '$us_id'");
 
-       return $m;
+        return $m;
 
     }
 

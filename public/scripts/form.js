@@ -4,7 +4,7 @@ $(document).ready(function () {
     $('.ex-login').submit(function (event) {
         event.preventDefault();
         if ($(".login").val() == "" && $(".password").val() == "") {
-            alert("Please insert empty inputs")
+            $("#loginErr").text("Please insert empty inputs")
         } else {
             $.ajax({
                 type: $(this).attr('method'),
@@ -12,12 +12,12 @@ $(document).ready(function () {
                 data: $("form").serializeArray(),
                 dataType: 'JSON',
                 success: function (data) {
-                    console.log(data)
                     if (data['success'] == false) {
 
                         $('#loginErr').html(data['errorMessage']).css("color", "red");
                     } else {
                         window.location.href = "/chat";
+
                     }
                 },
             });
@@ -76,7 +76,7 @@ $(document).ready(function () {
 
     $('form.ex-register').submit(function (event) {
         if ($('#username').val() == "" && $('#email').val() == "" && $('#password').val() == "") {
-            alert("Please insert empty inputs")
+            $("#regerr").text("Please insert empty inputs")
         } else {
             event.preventDefault();
             $.ajax({
@@ -102,19 +102,39 @@ $(document).ready(function () {
 //insert and select group chat data
 
     $('#btn').click(function () {
-        if ($("#message").text() == "") {
-            alert("Please insert message")
+        if ($.trim($('#message').val()) == ""  || $("#message").val()=="  ") {
+            $(".errmess").text("Please insert message").css("color","red");
         } else {
-            var message = {'message': $('#message').text()};
+            $(".errmess").text(" ")
+            var message = {'message': ($.trim($('#message').val()))};
             $.ajax({
                 type: "post",
                 url: "postmessage",
                 data: message,
                 dataType: "json",
                 success: function (data) {
+                    setInterval(function () {
+                        $.ajax({
+                            type: "post",
+                            url: "postmessage",
+                            data: "",
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log($("#message").text())
+                                $(".messText").remove();
+                                for (var i = 0; i < data[0].length; i++) {
 
-                    $("#text").append('<p class="messText">' + data[0]["text"] + '</p>');
-                    $("#text").animate({scrollTop: 9999}, 1);
+                                    $("#text").append('<p class="messText">' + htmlspecialchars(data[0][i]["text"]) + '</p>')
+                                }
+
+
+                            }
+                        });
+                    }, 3000);
+                    $("#message").val(" ");
+                    $("#text").append('<p class="messText">' + htmlspecialchars(data[0]["text"]) + '</p>');
+
+                    $("#text").animate({scrollTop: 9999}, 1001);
 
                 },
 
@@ -151,32 +171,24 @@ $(window).load(function () {
         data: "",
         dataType: 'json',
         success: function (data) {
-
+            $("#yourname").html(data[2][0]['username'])
             for (var i = 0; i < data[1].length; i++) {
                 $(".users").append('<li><a href="#" onclick="showDetails(event)" class="musers"  id="' + data[1][i]["id"] + '">' + data[1][i]["username"] + '</a></li>')
+                if ($(".musers")[i].id === data[2][0]['id']) {
+                    $("#" + data[2][0]['id']).css("color", "red")
+
+                }
             }
+                for (var i = 0; i < data[0].length; i++) {
+                    $("#text").append('<p class="messText">' + htmlspecialchars(data[0][i]["text"]) + '</p>')
+                }
 
         }
     });
+
 
 })
 
-setInterval(function () {
-    $.ajax({
-        type: "post",
-        url: "postmessage",
-        data: "",
-        dataType: 'json',
-        success: function (data) {
-            $(".messText").remove();
-            for (var i = 0; i < data[0].length; i++) {
-                $("#text").append('<p class="messText">' + data[0][i]["text"] + '</p>')
-            }
-
-
-        }
-    });
-}, 500);
 
 
 //open personal chat and select data
@@ -187,7 +199,7 @@ function showDetails(e) {
     $("#text1 .messText").remove();
     $("#text1").animate({scrollTop: 9999}, 1);
     $(".messText1").remove();
-    $(".dhide1").css("display", "block");
+    $(".dhide1").show();
     var message1 = {
         'persmessage': "",
         'user_id': user_id
@@ -201,7 +213,7 @@ function showDetails(e) {
         success: function (data) {
             $(".messText1").remove();
             for (var i = 0; i < data.length; i++) {
-                $("#text1").append('<p class="messText1">' + data[i]["pers_text"] + '</p>')
+                $("#text1").append('<p class="messText1">' + htmlspecialchars(data[i]["pers_text"]) + '</p>')
             }
         }
     });
@@ -213,30 +225,50 @@ $("#persbtn").click(function () {
     $("#text1").animate({scrollTop: 9999}, 1);
 
     var message1 = {
-        'persmessage': $('#message1').text(),
+        'persmessage': $.trim($('#message1').val()),
         'user_id': user_id
     };
-    $.ajax({
-        type: "post",
-        url: "postpersmessage",
-        data: message1,
-        dataType: 'json',
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $("#text1").append('<p class="messText1">' + data[i]["pers_text"] + '</p>')
-            }
-        }
-    });
-});
 
+
+        if ($.trim($('#message1').val()) == "" || $("#message1").val()=="  " ) {
+            $(".errmess1").text("Please insert message").css("color","red");
+        } else {
+            $(".errmess1").text(" ")
+        $.ajax({
+            type: "post",
+            url: "postpersmessage",
+            data: message1,
+            dataType: 'json',
+            success: function (data) {
+                $("#message1").val(" ");
+                for (var i = 0; i < data.length; i++) {
+                    $("#text1").append('<p class="messText1">' + htmlspecialchars(data[i]["pers_text"]) + '</p>')
+                }
+            }
+        });
+
+    }
+});
 //delete personal chat(div)
 
 $(".delete").click(function () {
-    $(".dhide").css("display", "none");
-    $(".open").css("display", "block");
+    $(".dhide").hide();
+    $(".open").show();
 });
 
 $("#delete1").click(function () {
-    $(".dhide1").css("display", "none");
+    $(".dhide1").hide();
+});
+//open in group chat
+$(".open").click(function () {
+    $(".dhide").show();
 });
 
+function htmlspecialchars(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}

@@ -1,3 +1,8 @@
+<?php
+if (isset($_SESSION['id'])) {
+$this->redirect('/chat/');
+}
+?>
 <div class="container">
 <h3>Login</h3>
 <form action="#" method="post" class="form-control-lg ex-login">

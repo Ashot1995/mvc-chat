@@ -57,7 +57,8 @@ class AccountController extends Controller
             } else {
                 echo json_encode([
                     'success' => false,
-                    'errorMessage' => "Incorrect Email or password"]);
+                    'errorMessage' => "Incorrect Email or password"
+                ]);
 //                $this->view->path = 'error';
 //                $this->view->render('Error');
             }
@@ -74,10 +75,9 @@ class AccountController extends Controller
             $_SESSION["username"] = $_POST['username'];
             $res1 = $this->insertModel->register($userName, $email, $password);
 
-            }
-
         }
 
+    }
 
 
     public function postMessageAction()
@@ -99,14 +99,14 @@ class AccountController extends Controller
     {
 
         if (!empty($_POST)) {
-            if($_POST['persmessage']!="") {
+            if ($_POST['persmessage'] != "") {
                 $us = $_SESSION["username"];
                 $persmessage = isset($_POST['persmessage']) ? $_POST['persmessage'] : null;
                 $us_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
                 $mess1 = $this->insertModel->message1($persmessage, $us_id, $us);
 
                 echo(json_encode($mess1));
-            }else{
+            } else {
                 $us_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
                 $m = $this->insertModel->selMessage1($us_id);
                 echo json_encode($m);
@@ -117,8 +117,6 @@ class AccountController extends Controller
     public function logoutAction()
     {
         session_destroy();
-
-
 
     }
 

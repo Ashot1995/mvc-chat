@@ -3,21 +3,24 @@ if (!isset($_SESSION['id'])) {
     $this->redirect('/chat/login');
 }
 ?>
+<h3>Welcome <em id = "yourname"></em></h3>
 <a href="" id="ex_logout">Logout</a>
-<a href="" class="open">Open group chat</a>
+<a href="#" class="open">Open group chat</a>
 
 <!--group chat-->
 
-<div>
+<div >
     <div class="cont dhide">
         <img src="public/images/del.png" alt="delete" class="delete image">
-        <h3>Chat</h3>
+        <h3>Group Chat</h3>
         <div class="text" id="text">
 
         </div>
         <div>
-            <div contenteditable="true" id="message" class="message"></div>
+            <textarea id="message" class="message" placeholder="Enter your message"></textarea>
         </div>
+        <span class="errmess"></span>
+
         <button id="btn" class="btn btn-success">Send<img src="public/images/send.png " class="image" alt="send image">
         </button>
     </div>
@@ -31,9 +34,9 @@ if (!isset($_SESSION['id'])) {
             <div class="text" id='text1'>
             </div>
             <div>
-                <div contenteditable="true" id="message1" class="message"></div>
+                <textarea id="message1" class="message" placeholder="Enter your message"></textarea>
             </div>
-
+            <span class="errmess1"></span>
             <button id="persbtn" class="btn btn-success">Send<img src="public/images/send.png " class="image"
                                                                   alt="send image"></button>
         </div>
@@ -41,6 +44,7 @@ if (!isset($_SESSION['id'])) {
 
     <!--Friends-->
     <div class="friendsDiv">
-        <div class="users"></div>
+        <div class="users"><em>Your friends</em></div>
     </div>
+
 </div>

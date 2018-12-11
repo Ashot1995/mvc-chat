@@ -3,7 +3,7 @@
 
 <head>
 	<title><?php echo $title; ?></title>
-    <link rel="shortcut icon" href="#">
+    <link rel="shortcut icon" href="public/images/chat.png">
     <link rel="stylesheet" href="public/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="public/style/style.css">
     <script
